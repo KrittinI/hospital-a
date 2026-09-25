@@ -21,7 +21,7 @@ func NewPatientHandler(paitentService *service.PatientService) *PatientHandler {
 
 func (h *PatientHandler) GetAllPatients(ctx *gin.Context) {
 	var filter dtos.PatientFilter
-	hospital_name := ""
+	hospital_name := ctx.GetString("hospitalName")
 
 	if err := ctx.ShouldBindQuery(&filter); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
@@ -43,7 +43,7 @@ func (h *PatientHandler) GetAllPatients(ctx *gin.Context) {
 
 func (h *PatientHandler) GetPatientById(ctx *gin.Context) {
 	patientId := ctx.Param("id")
-	hospital_name := ""
+	hospital_name := ctx.GetString("hospitalName")
 
 	patient, patientErr := h.paitentService.GetPatientById(hospital_name, patientId)
 	if patientErr != nil {

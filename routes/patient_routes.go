@@ -2,6 +2,7 @@ package routes
 
 import (
 	"hospital-a/handler"
+	"hospital-a/middleware"
 
 	"github.com/gin-gonic/gin"
 )
@@ -11,7 +12,7 @@ func PatientRoute(router *gin.RouterGroup, patientHandler *handler.PatientHandle
 	patient.POST("/", patientHandler.CreatePatient)
 
 	search := patient.Group("/search")
-	search.Use()
+	search.Use(middleware.JwtMiddleware())
 	search.GET("/", patientHandler.GetAllPatients)
 	search.GET("/:id", patientHandler.GetPatientById)
 }
