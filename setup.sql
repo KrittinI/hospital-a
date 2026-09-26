@@ -1,4 +1,4 @@
-CREATE DATABASE hospital;
+CREATE DATABASE hospital-a;
 
 \c gorest;
 

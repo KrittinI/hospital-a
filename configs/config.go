@@ -26,10 +26,10 @@ type databaseConfig struct {
 }
 
 func NewConfig() *Config {
-	err := godotenv.Load("configs/dev.env")
-
-	if err != nil {
-		panic("Error loading .env file")
+	if os.Getenv("ENV") == "" {
+		if err := godotenv.Load("configs/dev.env"); err != nil {
+			panic("Error loading configs/dev.env")
+		}
 	}
 
 	c := &Config{
