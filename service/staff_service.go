@@ -126,7 +126,7 @@ func (us *StaffService) StaffLogin(loginStaffRequest *dtos.LoginStaffRequest) (*
 	if staff.HospitalName != loginStaffRequest.HospitalName {
 		return nil, &models.ErrorResponse{
 			Code:    http.StatusBadRequest,
-			Message: "Username or Password incorrect 2",
+			Message: "Username or Password incorrect",
 		}
 	}
 
@@ -135,7 +135,7 @@ func (us *StaffService) StaffLogin(loginStaffRequest *dtos.LoginStaffRequest) (*
 	if !passCorrect {
 		return nil, &models.ErrorResponse{
 			Code:    http.StatusBadRequest,
-			Message: "Username or Password incorrect 3",
+			Message: "Username or Password incorrect",
 		}
 	}
 

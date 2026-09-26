@@ -50,6 +50,6 @@ func (sr *CreateStaffRequest) ToStaff(hashPassword string) *entities.Staff {
 func (sr *CreateStaffResponse) FromStaff(staff *entities.Staff) *CreateStaffResponse {
 	return &CreateStaffResponse{
 		UserName: staff.UserName,
-		Message:  "User created successfully.",
+		Message:  "Staff created successfully.",
 	}
 }

@@ -10,6 +10,11 @@ REST API สำหรับจัดการข้อมูลผู้ป่�
 - Docker
 - pgAdmin
 
+## Tech Stack Incomplete
+
+- Unit test
+- NginX
+
 ## Project Structure
 
 ```text
@@ -135,17 +140,92 @@ http://localhost:8080
 ตัวอย่าง endpoint:
 
 ```text
-GET    /patient/search
-GET    /patient/search/:id
-POST   /patient
-POST   /staff/create
-POST   /staff/login
+GET    /api/v1/patient/search
+GET    /api/v1/patient/search/:id
+POST   /api/v1/patient
+POST   /api/v1/staff/create
+POST   /api/v1/staff/login
+```
+
+### Create Staff
+
+```http
+POST /api/v1/staff/create
+Content-Type: application/json
+```
+
+ตัวอย่าง request:
+
+```json
+{
+  "username": "staff_01",
+  "password": "12345678",
+  "confirm_password": "12345678",
+  "hospital_name": "HN000001"
+}
+```
+
+error response:
+Username duplicate
+
+```json
+{
+  "code": 400,
+  "message": "Username already in use"
+}
+```
+
+success response:
+Username duplicate
+
+```json
+{
+  "username": "misterkk-1",
+  "message": "Staff created successfully."
+}
+```
+
+### Login Staff
+
+```http
+POST /api/v1/staff/login
+Content-Type: application/json
+```
+
+ตัวอย่าง request:
+
+```json
+{
+  "username": "staff_01",
+  "password": "12345678",
+  "hospital_name": "HN000001"
+}
+```
+
+error response:
+Username duplicate
+
+```json
+{
+  "code": 400,
+  "message": "Username or Password incorrect"
+}
+```
+
+success response:
+Username duplicate
+
+```json
+{
+  "token": "token",
+  "message": "Login success"
+}
 ```
 
 ### Create Patient
 
 ```http
-POST /patient
+POST /api/v1/patient
 Content-Type: application/json
 ```
 
@@ -168,4 +248,132 @@ Content-Type: application/json
   "phone_number": "0812345678",
   "gender": "MALE"
 }
+```
+
+error response:
+
+```json
+{
+  "code": 400,
+  "message": "Paitent already exists"
+}
+```
+
+success response:
+
+```json
+{
+  "message": "Patient created successfully."
+}
+```
+
+### Get Patient by Id (Protected)
+
+```http
+GET /api/v1/patient/search/:id
+```
+
+id - can be both of national_id or passport_id
+error response:
+
+```json
+{
+  "code": 401,
+  "error": "Invalid or expired token"
+}
+```
+
+error response:
+
+```json
+{
+  "code": 404,
+  "message": "Patient Not Found"
+}
+```
+
+success response:
+
+```json
+{
+  "first_name_th": "สมคริส",
+  "middle_name_th": "",
+  "last_name_th": "ทันใจ",
+  "first_name_en": "somchris",
+  "middle_name_en": "",
+  "last_name_en": "tunjai",
+  "date_of_birth": "1992-08-12T00:00:00Z",
+  "patient_hn": "HN000001",
+  "national_id": "11111111111",
+  "passport_id": "",
+  "phone_number": "0990000000",
+  "email": "somchris@mail.com",
+  "gender": ""
+}
+```
+
+### Get Patient (Protected)
+
+```http
+GET /api/v1/patient/search
+```
+
+Query parameters:
+
+| Parameter     | Type         | Description    |
+| ------------- | ------------ | -------------- |
+| `nationalId`  | `string`     | เลขบัตรประชาชน |
+| `passportId`  | `string`     | เลข Passport   |
+| `firstName`   | `string`     | ชื่อ           |
+| `middleName`  | `string`     | ชื่อกลาง       |
+| `lastName`    | `string`     | นามสกุล        |
+| `email`       | `string`     | Email          |
+| `phoneNumber` | `string`     | เบอร์โทรศัพท์  |
+| `dateOfBirth` | `YYYY-MM-DD` | วันเกิด        |
+
+error response:
+
+```json
+{
+  "code": 401,
+  "error": "Invalid or expired token"
+}
+```
+
+success response:
+
+```json
+[
+  {
+    "first_name_th": "สมคริส",
+    "middle_name_th": "",
+    "last_name_th": "ทันใจ",
+    "first_name_en": "somchris",
+    "middle_name_en": "",
+    "last_name_en": "tunjai",
+    "date_of_birth": "1992-08-12T00:00:00Z",
+    "patient_hn": "HN000001",
+    "national_id": "11111111111",
+    "passport_id": "",
+    "phone_number": "0990000000",
+    "email": "somchris@mail.com",
+    "gender": ""
+  },
+  {
+    "first_name_th": "สมคริส",
+    "middle_name_th": "",
+    "last_name_th": "ทันใจ",
+    "first_name_en": "somchris",
+    "middle_name_en": "",
+    "last_name_en": "tunjai",
+    "date_of_birth": "1992-08-12T00:00:00Z",
+    "patient_hn": "HN000001",
+    "national_id": "11111111111",
+    "passport_id": "",
+    "phone_number": "0990000000",
+    "email": "somchris@mail.com",
+    "gender": ""
+  },
+  ...
+]
 ```
