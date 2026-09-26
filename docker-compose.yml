@@ -28,8 +28,8 @@ services:
       CORS_ALLOWED_ORIGIN: ${CORS_ALLOWED_ORIGIN}
       DB_DRIVER: ${DB_DRIVER}
       DB_SOURCE: "postgres://${DB_USERNAME}:${DB_PASSWORD}@postgres:5432/${DB_NAME}?sslmode=disable"
-    ports:
-      - "8080:8080"
+    # ports:
+    #   - "8080:8080"
     depends_on:
       postgres:
         condition: service_healthy
@@ -45,6 +45,15 @@ services:
       - "5050:80"
     depends_on:
       - postgres
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - go-server
 
 volumes:
   postgres-data:
