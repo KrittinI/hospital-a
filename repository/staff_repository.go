@@ -16,14 +16,14 @@ func NewStaffRepository(db *sql.DB) *Staff {
 	}
 }
 
-func mapStaff(rows *sql.Row, u *entities.Staff) error {
-	return rows.Scan(&u.ID, &u.UserName, &u.HospitalName, &u.Password)
+func mapStaff(rows *sql.Row, s *entities.Staff) error {
+	return rows.Scan(&s.ID, &s.UserName, &s.HospitalName, &s.Password)
 }
 
 func (r *Staff) FindStaffByUsername(username string) (*entities.Staff, error) {
 	return r.SelectSingle(
 		mapStaff,
-		"SELECT u.id, u.username, u.password, u.hospital_name, FROM staff u WHERE u.username = $1",
+		"SELECT s.id, s.username, s.hospital_name, s.password FROM staff s WHERE s.username = $1",
 		username,
 	)
 }
@@ -31,7 +31,7 @@ func (r *Staff) FindStaffByUsername(username string) (*entities.Staff, error) {
 func (r *Staff) FindStaffById(id int) (*entities.Staff, error) {
 	return r.SelectSingle(
 		mapStaff,
-		"SELECT u.id, u.username, u.hospital_name, FROM staff u WHERE u.id = $1",
+		"SELECT s.id, s.username, s.hospital_name FROM staff s WHERE s.id = $1",
 		id,
 	)
 }

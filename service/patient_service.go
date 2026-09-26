@@ -3,6 +3,7 @@ package service
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 	"hospital-a/models"
 	"hospital-a/models/dtos"
 	"hospital-a/repository"
@@ -37,6 +38,8 @@ func (p *PatientService) GetPatientById(hospital_name string, uniqueid string) (
 	response := &dtos.PatientResponse{}
 
 	patient, err := p.patientRepo.FindByNationalIdOrPassportIdAndPatientHn(hospital_name, uniqueid)
+
+	fmt.Println(patient, err)
 
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {

@@ -1,7 +1,3 @@
-CREATE DATABASE hospital-a;
-
-\c gorest;
-
 CREATE TABLE staff (
    id SERIAL PRIMARY KEY,
    username VARCHAR(100) UNIQUE NOT NULL,
@@ -9,16 +5,16 @@ CREATE TABLE staff (
    hospital_name VARCHAR(20)
 );
 
-CREATE TABLE patients (
+CREATE TABLE patient (
    id SERIAL PRIMARY KEY,
    first_name_th VARCHAR(100) NOT NULL,
-   middle_name_th VARCHAR(100) NOT NULL,
+   middle_name_th VARCHAR(100),
    last_name_th VARCHAR(100) NOT NULL,
    first_name_en VARCHAR(100) NOT NULL,
-   middle_name_en VARCHAR(100) NOT NULL,
+   middle_name_en VARCHAR(100),
    last_name_en VARCHAR(100) NOT NULL,
    date_of_birth DATE NOT NULL,
-   patient_hn VARCHAR(100) NOT NULL
+   patient_hn VARCHAR(100) NOT NULL,
    email VARCHAR(255) NOT NULL,
    phone_number VARCHAR(20),
    gender VARCHAR(20),
@@ -29,7 +25,7 @@ CREATE TABLE patients (
    UNIQUE (passport_id, patient_hn)
 );
 
-INSERT INTO patients (
+INSERT INTO patient (
     first_name_th,
     middle_name_th,
     last_name_th,

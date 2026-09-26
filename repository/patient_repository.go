@@ -18,18 +18,33 @@ func NewPatientRepository(db *sql.DB) *Patient {
 	}
 }
 
-func mapPatient(rows *sql.Row, u *entities.Patient) error {
-	return rows.Scan(&u.ID, &u.FirstNameTH, &u.MiddleNameTH, &u.LastNameTH, &u.FirstNameEN, &u.MiddleNameEN, &u.LastNameEN, &u.DateOfBirth, &u.Email, &u.Gender, &u.NationalId, &u.PassportId, &u.PatientHospitalName, &u.PhoneNumber)
+func mapPatient(rows *sql.Row, p *entities.Patient) error {
+	return rows.Scan(&p.ID, &p.FirstNameTH, &p.MiddleNameTH, &p.LastNameTH, &p.FirstNameEN, &p.MiddleNameEN, &p.LastNameEN, &p.DateOfBirth, &p.Email, &p.Gender, &p.NationalId, &p.PassportId, &p.PatientHospitalName, &p.PhoneNumber)
 }
 
-func mapPatients(rows *sql.Rows, u *entities.Patient) error {
-	return rows.Scan(&u.ID, &u.FirstNameTH, &u.MiddleNameTH, &u.LastNameTH, &u.FirstNameEN, &u.MiddleNameEN, &u.LastNameEN, &u.DateOfBirth, &u.Email, &u.Gender, &u.NationalId, &u.PassportId, &u.PatientHospitalName, &u.PhoneNumber)
+func mapPatients(rows *sql.Rows, p *entities.Patient) error {
+	return rows.Scan(&p.ID, &p.FirstNameTH, &p.MiddleNameTH, &p.LastNameTH, &p.FirstNameEN, &p.MiddleNameEN, &p.LastNameEN, &p.DateOfBirth, &p.Email, &p.Gender, &p.NationalId, &p.PassportId, &p.PatientHospitalName, &p.PhoneNumber)
 }
 
 func (r *Patient) FindByNationalIdOrPassportIdAndPatientHn(hospital_name string, uniqueid string) (*entities.Patient, error) {
 	return r.SelectSingle(
 		mapPatient,
-		"SELECT * FROM patient u WHERE (national_id = $1 OR passport_id = $1) AND patient_hn = $2",
+		`SELECT 
+		p.id,
+	    p.first_name_th,
+    	p.middle_name_th,
+    	p.last_name_th,
+    	p.first_name_en,
+    	p.middle_name_en,
+    	p.last_name_en,
+    	p.date_of_birth,
+    	p.email,
+    	p.gender,
+    	p.national_id,
+    	p.passport_id,
+    	p.patient_hn,
+    	p.phone_number 
+		FROM patient p WHERE (p.national_id = $1 OR p.passport_id = $1) AND p.patient_hn = $2`,
 		uniqueid, hospital_name,
 	)
 }
@@ -37,14 +52,29 @@ func (r *Patient) FindByNationalIdOrPassportIdAndPatientHn(hospital_name string,
 func (r *Patient) FindById(id int) (*entities.Patient, error) {
 	return r.SelectSingle(
 		mapPatient,
-		"SELECT * FROM patient u WHERE u.id = $1",
+		"SELECT * FROM patient p WHERE p.id = $1",
 		id,
 	)
 }
 
 func (r *Patient) GetAllPatients(hospital_name string, filter *dtos.PatientFilter) ([]*entities.Patient, error) {
 	query := `
-	SELECT * FROM patient WHERE patient_hn = $1
+	SELECT 
+	p.id,
+	    p.first_name_th,
+    	p.middle_name_th,
+    	p.last_name_th,
+    	p.first_name_en,
+    	p.middle_name_en,
+    	p.last_name_en,
+    	p.date_of_birth,
+    	p.email,
+    	p.gender,
+    	p.national_id,
+    	p.passport_id,
+    	p.patient_hn,
+    	p.phone_number 
+		FROM patient p WHERE p.patient_hn = $1
 	`
 
 	var args []any
@@ -52,49 +82,49 @@ func (r *Patient) GetAllPatients(hospital_name string, filter *dtos.PatientFilte
 	index := 2
 
 	if filter.NationalId != nil {
-		query += fmt.Sprintf(" AND national_id = $%d", index)
+		query += fmt.Sprintf(" AND p.national_id = $%d", index)
 		args = append(args, *filter.NationalId)
 		index++
 	}
 
 	if filter.PassportId != nil {
-		query += fmt.Sprintf(" AND passport_id = $%d", index)
+		query += fmt.Sprintf(" AND p.passport_id = $%d", index)
 		args = append(args, *filter.PassportId)
 		index++
 	}
 
 	if filter.FirstName != nil {
-		query += fmt.Sprintf(" AND (first_name_th ILIKE $%d OR first_name_en ILIKE $%d)", index, index)
+		query += fmt.Sprintf(" AND (p.first_name_th ILIKE $%d OR p.first_name_en ILIKE $%d)", index, index)
 		args = append(args, "%"+*filter.FirstName+"%")
 		index++
 	}
 
 	if filter.MiddleName != nil {
-		query += fmt.Sprintf(" AND (middle_name_th ILIKE $%d OR middle_name_en ILIKE $%d)", index, index)
+		query += fmt.Sprintf(" AND (p.middle_name_th ILIKE $%d OR p.middle_name_en ILIKE $%d)", index, index)
 		args = append(args, "%"+*filter.MiddleName+"%")
 		index++
 	}
 
 	if filter.LastName != nil {
-		query += fmt.Sprintf(" AND (last_name_th ILIKE $%d OR last_name_en ILIKE $%d)", index, index)
+		query += fmt.Sprintf(" AND (p.last_name_th ILIKE $%d OR p.last_name_en ILIKE $%d)", index, index)
 		args = append(args, "%"+*filter.LastName+"%")
 		index++
 	}
 
 	if filter.Email != nil {
-		query += fmt.Sprintf(" AND email ILIKE $%d", index)
+		query += fmt.Sprintf(" AND p.email ILIKE $%d", index)
 		args = append(args, "%"+*filter.Email+"%")
 		index++
 	}
 
 	if filter.PhoneNumber != nil {
-		query += fmt.Sprintf(" AND phone_number ILIKE $%d", index)
+		query += fmt.Sprintf(" AND p.phone_number ILIKE $%d", index)
 		args = append(args, "%"+*filter.PhoneNumber+"%")
 		index++
 	}
 
 	if filter.DateOfBirth != nil {
-		query += fmt.Sprintf(" AND date_of_birth = $%d", index)
+		query += fmt.Sprintf(" AND p.date_of_birth = $%d", index)
 		args = append(args, *filter.DateOfBirth)
 		index++
 	}
@@ -120,7 +150,7 @@ func (r *Patient) CreatePatient(patient *entities.Patient) error {
         gender,
         national_id,
         passport_id,
-        patient_hospital_name,
+        patient_hn,
         phone_number
     )
     VALUES (
@@ -160,7 +190,7 @@ func (r *Patient) Update(patient *entities.Patient) error {
             gender = $9,
             national_id = $10,
             passport_id = $11,
-            patient_hospital_name = $12,
+            patient_hn = $12,
             phone_number = $13
         WHERE id = $14`,
 		patient.FirstNameTH,

@@ -2,6 +2,7 @@ package handler
 
 import (
 	"errors"
+	"fmt"
 	"hospital-a/models/dtos"
 	"hospital-a/service"
 	"net/http"
@@ -21,7 +22,11 @@ func NewPatientHandler(paitentService *service.PatientService) *PatientHandler {
 
 func (h *PatientHandler) GetAllPatients(ctx *gin.Context) {
 	var filter dtos.PatientFilter
-	hospital_name := ctx.GetString("hospitalName")
+	hospitalName := ctx.GetString("hospitalName")
+
+	fmt.Println(hospitalName)
+
+	// fmt.Println("%+v\n", *ctx)
 
 	if err := ctx.ShouldBindQuery(&filter); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
@@ -30,7 +35,7 @@ func (h *PatientHandler) GetAllPatients(ctx *gin.Context) {
 		return
 	}
 
-	patients, patientErr := h.paitentService.GetAllPatients(hospital_name, &filter)
+	patients, patientErr := h.paitentService.GetAllPatients(hospitalName, &filter)
 
 	if patientErr != nil {
 		ctx.AbortWithStatusJSON(patientErr.Code, patientErr)
@@ -43,9 +48,9 @@ func (h *PatientHandler) GetAllPatients(ctx *gin.Context) {
 
 func (h *PatientHandler) GetPatientById(ctx *gin.Context) {
 	patientId := ctx.Param("id")
-	hospital_name := ctx.GetString("hospitalName")
+	hospitalName := ctx.GetString("hospitalName")
 
-	patient, patientErr := h.paitentService.GetPatientById(hospital_name, patientId)
+	patient, patientErr := h.paitentService.GetPatientById(hospitalName, patientId)
 	if patientErr != nil {
 		ctx.AbortWithStatusJSON(patientErr.Code, patientErr)
 
