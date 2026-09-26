@@ -50,7 +50,7 @@ type CreatePatientRequest struct {
 	DateOfBirth         string `json:"date_of_birth" binding:"required"`
 	NationalId          string `json:"national_id" binding:"required_without=PassportId"`
 	PassportId          string `json:"passport_id" binding:"required_without=NationalId"`
-	Gender              string `json:"gender"`
+	Gender              string `json:"gender" binding:"required"`
 }
 
 type UpdatePatientRequest struct {
@@ -66,7 +66,7 @@ type UpdatePatientRequest struct {
 	DateOfBirth         string `json:"date_of_birth" binding:"required"`
 	NationalId          string `json:"national_id" binding:"required_without=PassportId"`
 	PassportId          string `json:"passport_id" binding:"required_without=NationalId"`
-	Gender              string `json:"gender"`
+	Gender              string `json:"gender" binding:"required"`
 }
 
 type CreatePatientResponse struct {
