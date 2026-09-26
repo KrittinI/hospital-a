@@ -9,11 +9,11 @@ REST API สำหรับจัดการข้อมูลผู้ป่�
 - PostgreSQL
 - Docker
 - pgAdmin
+- NginX
 
 ## Tech Stack Incomplete
 
 - Unit test
-- NginX
 
 ## Project Structure
 
